@@ -1,0 +1,16 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        /* Runtime Environment */
+        "lib": ["ESNext"],
+        "types": ["node"],
+    },
+    "include": [
+        "./*.config.ts",
+        "./scripts/**/*.ts", 
+        "./scripts/**/*.tsx",
+        "./scripts/**/*.js",
+        "./scripts/**/*.jsx"
+    ],
+    "exclude": ["./src/**/*"]
+}

@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+      /* Build Configuration */
+      "target": "ESNext",
+      "module": "ESNext",
+      "declaration": true,
+      "declarationMap": true,
+      "sourceMap": true,
+      "incremental": true,
+      "tsBuildInfoFile": "./build/.tsbuildinfo",
+
+      /* Module Resolution */
+      "moduleResolution": "bundler",
+      "moduleDetection": "force",
+      "baseUrl": ".",
+      "rootDir": "./src",
+      "outDir": "./dist",
+      "allowSyntheticDefaultImports": true,
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      "verbatimModuleSyntax": true,
+
+      /* Type Checking */
+      "strict": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noFallthroughCasesInSwitch": true,
+      "noUncheckedSideEffectImports": true
+  },
+  "include": [
+      "./src/**/*"
+  ]
+}

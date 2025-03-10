@@ -1,0 +1,149 @@
+# SLOP: Simple Language Open Protocol
+
+> **Because AI shouldn't be complicated**
+
+### 🎯 WHAT SLOP IS:
+- A pattern for AI APIs with 5 basic endpoints
+- Regular HTTP(S) requests with JSON data
+- A standard way to talk to any AI service
+- Based on REST: GET and POST what you need
+
+### 🚫 WHAT SLOP IS NOT:
+- A framework or library you install
+- A new technology or language
+- A specific company's product
+- An additional abstraction in any way
+
+> 💡 **SLOP simply says:** "AI services should work through plain web requests using patterns we've used for decades."
+
+That's it. Just a pattern. ✨
+
+---
+
+## 1. CORE BELIEFS
+- Everything is an HTTP request
+- Every tool is an API endpoint
+- Every AI is accessible
+- Every developer is welcome
+
+## 2. MINIMUM VIABLE ENDPOINTS
+- `POST /chat` // Talk to AI
+- `POST /tools` // Use tools
+- `POST /memory` // Remember stuff
+- `GET /resources` // Get knowledge/files/data
+- `POST /pay` // Handle money
+
+## 3. CONNECTION TYPES
+- Standard HTTP/REST Interface For Most Things
+  - Simple GET/POST requests with JSON payloads
+  - Standard HTTP status codes and headers
+  - Familiar request/response patterns
+  - Works with any HTTP client or server
+
+- WebSocket Support for Persistent Real-Time Connections
+  - Perfect for streaming responses from AI
+  - Enables continuous monitoring and events
+  - Supports complex multi-turn interactions
+
+- Server-Sent Events (SSE) for One-Way Real-Time Streaming
+  - Ideal for token-by-token AI responses
+  - Efficient for monitoring status changes
+  - Lower overhead than full WebSocket connections
+
+## 4. MULTI-AGENT CAPABILITIES
+- Route Queries to Specialized Agents Based on Content
+- Create Agent Networks with Different Skills and Roles
+- Support for Multiple Execution Patterns:
+  - Sequential (Chain agents in series)
+  - Parallel (Multiple agents working simultaneously)
+  - Branching (Dynamic routing based on query content)
+- Persistent Memory Allows Seamless Agent Collaboration
+
+## 🤝 THE SLOP PROMISE:
+
+### 1. OPEN
+- Free to use
+- Open source
+- No vendor lock
+- Community driven
+- Use any LLM model
+
+### 2. SIMPLE
+- REST based
+- JSON only
+- Standard HTTP
+- Zero dependencies
+
+### 3. FLEXIBLE
+- Any AI model
+- Any tool
+- Any platform
+
+---
+
+## 📖 ENDPOINT OPERATIONS (v0.0.1)
+
+### 💬 CHAT
+- `POST /chat` - Send messages to AI
+- `POST /chat` - Create or continue a thread (with thread_id)
+- `GET /chat/:id` - Get a specific chat
+- `GET /chat/thread_:id` - Get all messages in a thread
+- `GET /chat` - List recent chats
+- `GET /chat?type=threads` - List all threads
+
+### 🛠️ TOOLS
+- `GET /tools` - List available tools
+- `POST /tools/:tool_id` - Use a specific tool
+- `GET /tools/:tool_id` - Get tool details
+
+### 🧠 MEMORY
+- `POST /memory` - Store a key-value pair
+- `GET /memory/:key` - Get value by key
+- `GET /memory` - List all keys
+- `PUT /memory/:key` - Update existing value
+- `DELETE /memory/:key` - Delete a key-value pair
+- `POST /memory/query` - Search with semantic query
+
+### 📚 RESOURCES
+- `GET /resources` - List available resources
+- `GET /resources/:id` - Get a specific resource
+- `GET /resources/search?q=query` - Search resources
+
+### 💳 PAY
+- `POST /pay` - Create a payment
+- `GET /pay/:id` - Get payment status
+
+---
+
+### 📜 Example API Calls
+
+#### Chat Example:
+```json
+POST /chat
+{
+  "messages": [{"role": "user", "content": "What's the weather like?"}],
+  "model": "gpt-4"
+}
+```
+
+#### Calling a Tool:
+```json
+POST /tools/calculator
+{
+  "expression": "15 * 7"
+}
+```
+
+#### Storing Memory:
+```json
+POST /memory
+{
+  "key": "user_preference",
+  "value": {"theme": "dark", "language": "en"}
+}
+```
+
+## 🔗 Learn More
+SLOP is open-source and community-driven. Get involved at:  
+[GitHub Repository](https://github.com/agnt-gg/slop)  
+[Discord Community](https://discord.com/invite/nwXJMnHmXP)

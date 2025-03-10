@@ -1,0 +1,62 @@
+{
+  "name": "@kortexa-ai/mcp-slop-adapter",
+  "version": "0.1.0",
+  "description": "MCP to SLOP adapter",
+  "copyright": "Copyright © 2025 kortexa.ai",
+  "author": {
+    "name": "Franci Penov",
+    "email": "francip@kortexa.ai",
+    "url": "https://kortexa.ai"
+  },
+  "keywords": [],
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kortexa-ai/mcp-slop-adapter.git"
+  },
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "tsx src/server.ts",
+    "dev": "nodemon --watch src --exec 'tsx' src/server.ts",
+    "clean": "rm -rf dist dev-dist build coverage data",
+    "lint": "eslint . --report-unused-disable-directives --no-error-on-unmatched-pattern",
+    "lint:fix": "npm run lint -- --fix",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit",
+    "build": "tsc -b && tsc -p tsconfig.app.json && tsc-alias -p tsconfig.app.json",
+    "validate": "npm run typecheck && npm run lint && npm run test",
+    "coverage": "vitest run --coverage",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "test:ci": "vitest run --coverage --reporter=json --outputFile=build/test-results.json"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "axios": "^1.6.7",
+    "dotenv": "^16.4.7",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "@vitest/coverage-v8": "^3.0.7",
+    "eslint": "^9.21.0",
+    "eslint-import-resolver-typescript": "^3.8.3",
+    "eslint-plugin-import": "^2.31.0",
+    "globals": "^16.0.0",
+    "jiti": "^2.4.2",
+    "nodemon": "^3.1.9",
+    "npm-check-updates": "^17.1.15",
+    "tsc-alias": "^1.8.11",
+    "tsx": "^4.19.3",
+    "typescript": "~5.7.3",
+    "typescript-eslint": "^8.25.0",
+    "vitest": "^3.0.7"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
+}
