@@ -27,9 +27,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.PACKAGE_PUBLISH_TOKEN }}" >> .npmrc
-      - run: npm install --ignore-scripts
-      - run: rm .npmrc
+        run: npm install --ignore-scripts
 
       - name: Determine version
         id: version
