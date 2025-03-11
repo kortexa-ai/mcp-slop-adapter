@@ -1,0 +1,91 @@
+name: Version Update
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to bump to (e.g., 0.2.0). If not provided, patch version will be incremented'
+        required: false
+        type: string
+
+run-name: Update version by @${{ github.actor }}
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.VERSION_UPDATE_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.PACKAGE_PUBLISH_TOKEN }}" >> .npmrc
+      - run: npm install --ignore-scripts
+      - run: rm .npmrc
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ -z "${{ inputs.version }}" ]; then
+            echo "VERSION=$(node scripts/get-next-version.js)" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${{ inputs.version }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update version
+        run: |
+          npm version ${{ steps.version.outputs.VERSION }} --no-git-tag-version
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.VERSION_UPDATE_TOKEN }}
+          title: 'chore: bump version to ${{ steps.version.outputs.VERSION }}'
+          branch: 'version-bump-${{ steps.version.outputs.VERSION }}'
+          commit-message: 'chore: bump version to ${{ steps.version.outputs.VERSION }}'
+          delete-branch: true
+
+      - name: Enable Pull Request Auto-merge
+        if: steps.cpr.outputs.pull-request-number
+        run: gh pr merge --auto --merge "${{ steps.cpr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Wait for PR to be merged
+        if: steps.cpr.outputs.pull-request-number
+        run: |
+          while : ; do
+            PR_STATE=$(gh pr view ${{ steps.cpr.outputs.pull-request-number }} --json state -q .state)
+            if [ "$PR_STATE" = "MERGED" ]; then
+              break
+            fi
+            sleep 10
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and push tag
+        if: steps.cpr.outputs.pull-request-number
+        run: |
+          git fetch
+          git checkout main
+          git pull
+          git tag v${{ steps.version.outputs.VERSION }}
+          git push origin v${{ steps.version.outputs.VERSION }}
+
+      - name: Create Release
+        run: |
+          gh release create v${{ steps.version.outputs.VERSION }} \
+            --title "v${{ steps.version.outputs.VERSION }}" \
+            --notes "Release v${{ steps.version.outputs.VERSION }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.VERSION_UPDATE_TOKEN }}
