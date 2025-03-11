@@ -52,7 +52,7 @@
     "test:watch": "vitest",
     "test:ci": "vitest run --coverage --reporter=json --outputFile=build/test-results.json",
     "bump": "gh workflow run 'Version Update'",
-    "bump:to": "gh workflow run 'Version Update' --field version",
+    "bump:to": "gh workflow run 'Version Update' --field",
     "postinstall": "tsx scripts/postinstall.ts",
     "prebuild": "tsx scripts/prebuild.ts",
     "prepublishOnly": "npm run validate && npm run build"
