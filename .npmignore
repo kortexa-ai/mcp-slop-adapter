@@ -1,0 +1,27 @@
+# Source files
+src/
+tests/
+scripts/
+
+# Development files
+.github/
+.vscode/
+.eslintrc*
+.gitignore
+.prettierrc*
+tsconfig*.json
+vitest.config.*
+nodemon.json
+
+# Build artifacts
+coverage/
+build/
+dev-dist/
+
+# Documentation not needed in package
+docs/
+
+# Misc
+*.log
+.DS_Store
+simple-slop-server/

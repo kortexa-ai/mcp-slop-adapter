@@ -23,11 +23,15 @@
   },
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CONTRIBUTING.md",
+    "CHANGELOG.md"
   ],
   "main": "./dist/main.js",
   "bin": {
-    "mcp-slop-adapter": "./dist/main.js"
+    "mcp-slop-adapter": "dist/main.js"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
@@ -51,7 +55,7 @@
     "postinstall": "tsx scripts/postinstall.ts",
     "prebuild": "tsx scripts/prebuild.ts",
     "prepublishOnly": "npm run validate && npm run build",
-    "publish:npm": "npm publish --registry=https://registry.npmjs.org/ --access=public"
+    "publish-npm": "npm publish --registry=https://registry.npmjs.org/ --access=public"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.6.1",
