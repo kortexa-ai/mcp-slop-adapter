@@ -3,6 +3,7 @@
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import axios from 'axios';
+import type { AxiosError } from 'axios';
 import { loadEnv } from './config/dotenv.js';
 import { z } from 'zod';
 
@@ -35,24 +36,52 @@ const mcpServer = new McpServer({
   }
 });
 
+// Define types for SLOP responses
+interface SlopErrorResponse {
+  error?: string;
+  status?: number;
+}
+
+interface SlopToolResponse {
+  result: unknown;
+}
+
+interface SlopResourceResponse {
+  content: unknown;
+}
+
+interface SlopTool {
+  id: string;
+  description?: string;
+}
+
+interface SlopResource {
+  id: string;
+  name?: string;
+}
+
 // Helper function to convert SLOP error responses to MCP format
-function handleSlopError(error: any): string {
-  const message = error.response?.data?.error || error.message || 'Unknown error';
-  const status = error.response?.status || 500;
-  return `SLOP server error (${status}): ${message}`;
+function handleSlopError(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    const axiosError = error as AxiosError<SlopErrorResponse>;
+    const message = axiosError.response?.data?.error || axiosError.message || 'Unknown error';
+    const status = axiosError.response?.status || 500;
+    return `SLOP server error (${status}): ${message}`;
+  }
+  return `Unknown error: ${String(error)}`;
 }
 
 // Initialize the server by:
 // 1. Fetch all SLOP tools and register them as MCP tools
 // 2. Fetch all SLOP resources and register them with the MCP server
-async function initializeServer() {
+async function initializeServer(): Promise<void> {
   try {
     // Fetch and register SLOP tools
     const toolsResponse = await slopApi.get('/tools');
-    const slopTools = toolsResponse.data.tools || [];
+    const slopTools = toolsResponse.data.tools as SlopTool[] || [];
     
     // Register each SLOP tool as an MCP tool
-    slopTools.forEach((slopTool: any) => {
+    slopTools.forEach((slopTool: SlopTool) => {
       mcpServer.tool(
         slopTool.id,
         slopTool.description || `SLOP tool: ${slopTool.id}`,
@@ -64,7 +93,7 @@ async function initializeServer() {
         async (args) => {
           try {
             // Call the corresponding SLOP tool endpoint
-            const response = await slopApi.post(`/tools/${slopTool.id}`, JSON.parse(args.params));
+            const response = await slopApi.post<SlopToolResponse>(`/tools/${slopTool.id}`, JSON.parse(args.params));
             
             // Convert SLOP response to MCP format
             return {
@@ -95,7 +124,7 @@ async function initializeServer() {
     
     // Fetch SLOP resources
     const resourcesResponse = await slopApi.get('/resources');
-    const slopResources = resourcesResponse.data.resources || [];
+    const slopResources = resourcesResponse.data.resources as SlopResource[] || [];
     
     // Register each SLOP resource
     for (const resource of slopResources) {
@@ -108,13 +137,13 @@ async function initializeServer() {
 }
 
 // Register a SLOP resource for use with MCP
-async function registerSlopResource(resource: any) {
+async function registerSlopResource(resource: SlopResource): Promise<void> {
   const resourceId = resource.id;
   const resourceUri = `slop://resources/${resourceId}`;
   
   try {
     // Fetch the resource content to determine its schema
-    const resourceResponse = await slopApi.get(`/resources/${resourceId}`);
+    const resourceResponse = await slopApi.get<SlopResourceResponse>(`/resources/${resourceId}`);
     let content = resourceResponse.data.content;
     
     // Ensure content is a string
@@ -144,7 +173,7 @@ async function registerSlopResource(resource: any) {
 }
 
 // Register additional tools for SLOP-specific endpoints
-function registerSlopSpecificTools() {
+function registerSlopSpecificTools(): void {
   // Store memory
   mcpServer.tool(
     'memory-store',
