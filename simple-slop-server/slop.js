@@ -1,6 +1,7 @@
 // JavaScript implementation of the SLOP pattern
 import express from 'express';
 import axios from 'axios';
+import cors from 'cors';
 
 // Available tools and resources
 const tools = {
@@ -22,6 +23,10 @@ const resources = {
 
 // Setup server
 const app = express();
+
+app.use(cors({
+  origin: 'https://localhost:8004'
+}));
 app.use(express.json());
 
 // In-memory storage
